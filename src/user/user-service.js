@@ -1,4 +1,6 @@
-const bcrypt = require('bcryptjs')
+'use strict';
+
+const bcrypt = require('bcryptjs');
 
 const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/
 
@@ -46,7 +48,7 @@ const UserService = {
       const [languageId] = await trx
         .into('language')
         .insert([
-          { name: 'French', user_id },
+          { name: 'Russian', user_id },
         ], ['id'])
 
       // when inserting words,
@@ -58,23 +60,25 @@ const UserService = {
         .first()
 
       const languageWords = [
-        ['entraine toi', 'practice', 2],
-        ['bonjour', 'hello', 3],
-        ['maison', 'house', 4],
-        ['développeur', 'developer', 5],
-        ['traduire', 'translate', 6],
-        ['incroyable', 'amazing', 7],
-        ['chien', 'dog', 8],
-        ['chat', 'cat', null],
+        ['А а', 'a', '"a" in car', 'ah', 2],
+        ['Б б', 'b', '"b" in bat', 'beh', 3],
+        ['В в', 'v', '"v" in van', 'veh', 4],
+        ['Г г', 'g', '"g" in go', 'geh', 5],
+        ['Д д', 'd', '"d" in dog', 'deh', 6],
+        ['Е е', 'ye', '"ye" in yet', 'yeh', 7],
+        ['Ё ё', 'yo', '"yo" in yonder', 'yo', 8],
+        ['Ж ж', 'zh', '"s" in measure or "g" in beige', 'zheh', null],
       ]
 
       const [languageHeadId] = await trx
         .into('word')
         .insert(
-          languageWords.map(([original, translation, nextInc]) => ({
+          languageWords.map(([original, translation, example, name, nextInc]) => ({
             language_id: languageId.id,
             original,
             translation,
+            example,
+            name,
             next: nextInc
               ? Number(seq.last_value) + nextInc
               : null
@@ -89,6 +93,6 @@ const UserService = {
         })
     })
   },
-}
+};
 
-module.exports = UserService
+module.exports = UserService;

@@ -1,9 +1,11 @@
-const express = require('express')
-const AuthService = require('./auth-service')
-const { requireAuth } = require('../middleware/jwt-auth')
+'use strict';
 
-const authRouter = express.Router()
-const jsonBodyParser = express.json()
+const express = require('express');
+const AuthService = require('./auth-service');
+const { requireAuth } = require('../middleware/jwt-auth');
+
+const authRouter = express.Router();
+const jsonBodyParser = express.json();
 
 authRouter
   .route('/token')
@@ -60,6 +62,6 @@ authRouter
     res.send({
       authToken: AuthService.createJwt(sub, payload),
     })
-  })
+  });
 
-module.exports = authRouter
+module.exports = authRouter;

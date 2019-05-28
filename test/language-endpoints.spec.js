@@ -99,6 +99,8 @@ describe('Language Endpoints', function () {
             expect(word).to.have.property('id', usersWord.id)
             expect(word).to.have.property('original', usersWord.original)
             expect(word).to.have.property('translation', usersWord.translation)
+            expect(word).to.have.property('example', usersWord.example)
+            expect(word).to.have.property('name', usersWord.name)
             expect(word).to.have.property('memory_value', 1)
             expect(word).to.have.property('correct_count', 0)
             expect(word).to.have.property('incorrect_count', 0)

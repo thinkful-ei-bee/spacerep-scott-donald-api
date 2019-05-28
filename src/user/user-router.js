@@ -1,9 +1,11 @@
-const express = require('express')
-const path = require('path')
-const UserService = require('./user-service')
+'use strict';
 
-const userRouter = express.Router()
-const jsonBodyParser = express.json()
+const express = require('express');
+const path = require('path');
+const UserService = require('./user-service');
+
+const userRouter = express.Router();
+const jsonBodyParser = express.json();
 
 userRouter
   .post('/', jsonBodyParser, async (req, res, next) => {
@@ -54,6 +56,6 @@ userRouter
     } catch(error) {
       next(error)
     }
-  })
+  });
 
-module.exports = userRouter
+module.exports = userRouter;

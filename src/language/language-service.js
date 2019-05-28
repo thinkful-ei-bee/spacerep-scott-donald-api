@@ -1,3 +1,5 @@
+'use strict';
+
 const LanguageService = {
   getUsersLanguage(db, user_id) {
     return db
@@ -21,6 +23,8 @@ const LanguageService = {
         'language_id',
         'original',
         'translation',
+        'example',
+        'name',
         'next',
         'memory_value',
         'correct_count',
@@ -28,6 +32,6 @@ const LanguageService = {
       )
       .where({ language_id })
   },
-}
+};
 
-module.exports = LanguageService
+module.exports = LanguageService;

@@ -1,5 +1,7 @@
-const { JsonWebTokenError } = require('jsonwebtoken')
-const AuthService = require('../auth/auth-service')
+'use strict';
+
+const { JsonWebTokenError } = require('jsonwebtoken');
+const AuthService = require('../auth/auth-service');
 
 async function requireAuth(req, res, next) {
   const authToken = req.get('Authorization') || ''
@@ -30,8 +32,8 @@ async function requireAuth(req, res, next) {
 
     next(error)
   }
-}
+};
 
 module.exports = {
   requireAuth,
-}
+};

@@ -1,8 +1,10 @@
-const express = require('express')
-const LanguageService = require('./language-service')
-const { requireAuth } = require('../middleware/jwt-auth')
+'use strict';
 
-const languageRouter = express.Router()
+const express = require('express');
+const LanguageService = require('./language-service');
+const { requireAuth } = require('../middleware/jwt-auth');
+
+const languageRouter = express.Router();
 
 languageRouter
   .use(requireAuth)
@@ -23,7 +25,7 @@ languageRouter
     } catch (error) {
       next(error)
     }
-  })
+  });
 
 languageRouter
   .get('/', async (req, res, next) => {
@@ -41,18 +43,18 @@ languageRouter
     } catch (error) {
       next(error)
     }
-  })
+  });
 
 languageRouter
   .get('/head', async (req, res, next) => {
     // implement me
     res.send('implement me!')
-  })
+  });
 
 languageRouter
   .post('/guess', async (req, res, next) => {
     // implement me
     res.send('implement me!')
-  })
+  });
 
-module.exports = languageRouter
+module.exports = languageRouter;
