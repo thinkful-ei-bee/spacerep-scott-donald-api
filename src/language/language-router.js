@@ -101,6 +101,8 @@ languageRouter
       );
 
       // console.log('words', words)
+
+      const nextHead = words.filter(word => word.id === head[0].next)
     
 
       const lang = await LanguageService.getUsersLanguage(
@@ -135,7 +137,7 @@ languageRouter
       }
 
       const newHead = head[0].next
-      
+
 
       //shifting the head within the linked list and
       //accounting for memory_value that's greater than number of words
@@ -151,7 +153,7 @@ languageRouter
       
 
       const newWords = display(LL);
-      // console.log('newWords', newWords);
+      console.log('newWords', newWords);
 
      
 
@@ -177,9 +179,9 @@ languageRouter
       //newWords[memory_value].next = head.id
       const prevUpdate = {
         next: head[0].id,
-        correct_count: newWords[newIndex].correct_count,
-        incorrect_count: newWords[newIndex].incorrect_count,
-        memory_value: newWords[newIndex].memory_value
+        correct_count: newWords[newIndex-1].correct_count,
+        incorrect_count: newWords[newIndex-1].incorrect_count,
+        memory_value: newWords[newIndex-1].memory_value
       }
       // console.log('prevUpdate:', prevUpdate)
       // console.log('prevUpdate ID:', newWords[memory_value - 1].id)
@@ -223,8 +225,10 @@ languageRouter
 
       res.json({
         nextWord: newWords[0].original,
-        wordCorrectCount,
-        wordIncorrectCount,
+        // wordCorrectCount,
+        wordCorrectCount: nextHead[0].correct_count,
+        // wordIncorrectCount,
+        wordIncorrectCount: nextHead[0].incorrect_count,
         // totalScore,
         totalScore: totalScore[0],
         answer: `Correct Answer: '${correct}' Sound: ${example} Letter Name: '${name}'`,
