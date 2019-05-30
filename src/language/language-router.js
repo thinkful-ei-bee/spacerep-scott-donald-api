@@ -141,12 +141,18 @@ languageRouter
 
       //shifting the head within the linked list and
       //accounting for memory_value that's greater than number of words
-      const newIndex = memory_value;
+
+      
+
+      let newIndex = memory_value;
+      let overflow = false;
 
       LL.remove(head[0]);
-      if(memory_value >= words.length) {
+      //added - 1 to length to fix last issue
+      if(memory_value >= words.length - 1) {
         LL.insertLast(head[0]);
         newIndex = words.length - 1;
+        overflow = true;
       } else{
         LL.insertAt(head[0], memory_value);
       }
@@ -162,7 +168,8 @@ languageRouter
       //head.wordCorrectCount = wordCorrectCount
       //head.wordIncorrectCount = wordIncorrectCount
       const headUpdate = {
-        next: newWords[newIndex + 1].id,
+        // next: newWords[newIndex + 1].id,
+        next: overflow ? null : newWords[newIndex + 1].id,
         correct_count: wordCorrectCount,
         incorrect_count: wordIncorrectCount,
         memory_value
