@@ -82,47 +82,52 @@ languageRouter
     const { guess } = req.body
     
     try {
-
+      //checking for guess in req
       if (!guess)
         return res.status(400).json({
           error: `Missing 'guess' in request body`,
         })
 
+      //getting head from db
       const head = await LanguageService.getHead(
         req.app.get('db'),
         req.user.id
       );
-
-      // console.log('head', head[0])
-
+      
+      //getting words from db
       const words = await LanguageService.getLanguageWords(
         req.app.get('db'),
         head[0].language_id
       );
 
-      // console.log('words', words)
+      //finding the next head in words with nextHeadId
+      const nextHeadId = head[0].next
+      const nextHead = words.filter(word => word.id === nextHeadId)
 
-      const nextHead = words.filter(word => word.id === head[0].next)
-    
-
+      //getting language from db
       const lang = await LanguageService.getUsersLanguage(
         req.app.get('db'),
         req.user.id
       );
 
-
+      //creating the blank linked list, LL
       const LL = new LinkedList;
       
+      //inserting words into LL in next order
       buildLL(LL, head[0], words);
 
+      //correct answer
       const correct = head[0].translation
 
+      //declaring variables for guess check and later response
       let isCorrect;
       let memory_value;
       let wordCorrectCount = head[0].correct_count;
       let wordIncorrectCount = head[0].incorrect_count;
       let totalScore;
 
+      //if guess is correct, memory_value times 2, correctCount and totalScore + 1
+      //if incorrect, memory_value reset to 1 and incorrectCount + 1
       if (guess === correct) {
         isCorrect = true;
         memory_value = head[0].memory_value*2;
@@ -132,111 +137,77 @@ languageRouter
         isCorrect = false;
         memory_value = 1;
         wordIncorrectCount = head[0].incorrect_count + 1;
-        // totalScore = lang.total_score - 1;
         totalScore = lang.total_score;
       }
 
-      const newHead = head[0].next
-
-
-      //shifting the head within the linked list and
-      //accounting for memory_value that's greater than number of words
-
-      
-
+      //newIndex for current head
       let newIndex = memory_value;
       let overflow = false;
 
+      //removing head from LL, re-insert at newIndex, or end if overflowing
       LL.remove(head[0]);
-      //added - 1 to length to fix last issue
-      if(memory_value >= words.length - 1) {
+
+      //if newIndex overflowing list, reinsert head last, adjust newIndex, set overflow true
+      //else, reinsert head at newIndex
+      if(newIndex >= words.length - 1) {
         LL.insertLast(head[0]);
         newIndex = words.length - 1;
         overflow = true;
       } else{
-        LL.insertAt(head[0], memory_value);
+        LL.insertAt(head[0], newIndex);
       }
       
-
+      //create array with updated LL
       const newWords = display(LL);
-      console.log('newWords', newWords);
 
-     
-
-      //head.next = newWords[memory_value + 1].id
-      //head.memory_value = memory_value
-      //head.wordCorrectCount = wordCorrectCount
-      //head.wordIncorrectCount = wordIncorrectCount
+      //build object to update current head in db
+      //updating next, correcttCount, incorrectCount, and memory_value
       const headUpdate = {
-        // next: newWords[newIndex + 1].id,
         next: overflow ? null : newWords[newIndex + 1].id,
         correct_count: wordCorrectCount,
         incorrect_count: wordIncorrectCount,
         memory_value
       };
-      // console.log('headUpdate:', headUpdate)
-      // console.log('headUpdate ID:', head[0].id)
-
+      
+      //update current head in db
       await LanguageService.updateWord(
         req.app.get('db'),
         head[0].id,
         headUpdate
       );
 
-      //newWords[memory_value].next = head.id
+      //build object to update item pointing to new head position
+      //updating next, other values stay the same
       const prevUpdate = {
         next: head[0].id,
         correct_count: newWords[newIndex-1].correct_count,
         incorrect_count: newWords[newIndex-1].incorrect_count,
         memory_value: newWords[newIndex-1].memory_value
       }
-      // console.log('prevUpdate:', prevUpdate)
-      // console.log('prevUpdate ID:', newWords[memory_value - 1].id)
-
+      
+      //update prev in db
       await LanguageService.updateWord(
         req.app.get('db'),
         newWords[newIndex - 1].id,
         prevUpdate
       );
 
-
-      // next: update.next,
-      //   correct_count: update.correct_count,
-      //   incorrect_count: update.incorrect_count,
-      //   memory_value: update.memory_value,
-
-
-
-      //language.head = newHead
-      //language.total_score = totalScore
+      //update language in db with new totalScore and next head
       totalScore = await LanguageService.updateUserLanguage(
         req.app.get('db'),
         req.user.id,
-        newHead,
+        nextHeadId,
         totalScore
       );
 
+      //example and name for res Obj
       const {example, name} = head[0];
 
-      const resObj = {
-        nextWord: newWords[0].original,
-        wordCorrectCount,
-        wordIncorrectCount,
-        // totalScore,
-        totalScore: totalScore[0],
-        answer: `Correct Answer: '${correct}' Sound: ${example} Letter Name: '${name}'`,
-        isCorrect
-      }
-
-      console.log('resObj', resObj)
-
+      //res with nextWord and nextWord's data, current score, and answer to question
       res.json({
         nextWord: newWords[0].original,
-        // wordCorrectCount,
         wordCorrectCount: nextHead[0].correct_count,
-        // wordIncorrectCount,
         wordIncorrectCount: nextHead[0].incorrect_count,
-        // totalScore,
         totalScore: totalScore[0],
         answer: `Correct Answer: '${correct}' Sound: ${example} Letter Name: '${name}'`,
         isCorrect
