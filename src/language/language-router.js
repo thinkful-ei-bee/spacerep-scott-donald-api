@@ -209,7 +209,8 @@ languageRouter
         wordCorrectCount: nextHead[0].correct_count,
         wordIncorrectCount: nextHead[0].incorrect_count,
         totalScore: totalScore[0],
-        answer: `Correct Answer: '${correct}' Sound: ${example} Letter Name: '${name}'`,
+        // answer: `Correct Answer: '${correct}' Sound: ${example} Letter Name: '${name}'`,
+        answer: {correct, example, name},
         isCorrect
       })
       next()
