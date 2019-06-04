@@ -1,42 +1,36 @@
-# Spaced repetition API!
+# Spaced repetition API
 
-## Local dev setup
+This is the server side for the [Spaced Repetition Project](https://github.com/thinkful-ei-bee/spacerep-client-scott-donald).
+Created by Scott Williams and Donald Sonn
 
-If using user `dunder-mifflin`:
+## API Documentation
 
-```bash
-mv example.env .env
-createdb -U dunder-mifflin spaced-repetition
-createdb -U dunder-mifflin spaced-repetition-test
-```
+### POST /api/auth/token
 
-If your `dunder-mifflin` user has a password be sure to set it in `.env` for all appropriate fields. Or if using a different user, update appropriately.
+Login route.
+"username" and "password" required in body
 
-```bash
-npm install
-npm run migrate
-env MIGRATION_DB_NAME=spaced-repetition-test npm run migrate
-```
+### PUT /api/auth/token
 
-And `npm test` should work at this point
+Refreshes JWT
 
-## Configuring Postgres
+### GET /api/language
 
-For tests involving time to run properly, configure your Postgres database to run in the UTC timezone.
+Returns language and words
 
-1. Locate the `postgresql.conf` file for your Postgres installation.
-   1. E.g. for an OS X, Homebrew install: `/usr/local/var/postgres/postgresql.conf`
-   2. E.g. on Windows, _maybe_: `C:\Program Files\PostgreSQL\11.2\data\postgresql.conf`
-2. Find the `timezone` line and set it to `UTC`:
+### GET /api/language/head
 
-```conf
-# - Locale and Formatting -
+Returns next word for testing and data on that word
 
-datestyle = 'iso, mdy'
-#intervalstyle = 'postgres'
-timezone = 'UTC'
-#timezone_abbreviations = 'Default'     # Select the set of available time zone
-```
+### POST /api/language/guess
+
+Returns correct answer and shifts head to next question
+"guess" required in body
+
+### POST /api/user
+
+Creates new user
+"name", "username", and "password" required in body
 
 ## Scripts
 
