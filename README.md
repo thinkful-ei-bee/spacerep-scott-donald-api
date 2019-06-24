@@ -1,7 +1,7 @@
 # Spaced repetition API
 
 This is the server side for the [Spaced Repetition Project](https://github.com/thinkful-ei-bee/spacerep-client-scott-donald).
-Created by Scott Williams
+Created by Scott Williams and Donald Sonn
 
 ## API Documentation
 
